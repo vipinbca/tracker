@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: #1DB954;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            position: relative;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+            background-color: rgba(29, 185, 84, 0.2);
+            border: none;
+            color: #1DB954;
+            padding: 10px;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+        .menu-icon:hover {
+            background-color: rgba(29, 185, 84, 0.4);
+        }
+        .menu {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            background-color: #191414;
+            border-radius: 5px;
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+            width: 150px;
+            text-align: left;
+        }
+        .menu button {
+            display: block;
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 10px;
+            text-align: left;
+            color: #1DB954;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .menu button:hover {
+            background-color: #222;
+        }
+        .container {
+            background-color: #191414;
+            padding: 20px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 320px;
+            margin: auto;
+            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+        }
+        input {
+            width: 90%;
+            padding: 12px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 2px solid #1DB954;
+            font-size: 16px;
+            text-align: center;
+            background-color: #121212;
+            color: white;
+        }
+        button {
+            width: 100%;
+            background-color: #1DB954;
+            color: black;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        .progress-bar-container {
+            width: 90%;
+            max-width: 320px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        .progress-bar {
+            background: #535353;
+            height: 12px;
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background: #1DB954;
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.3s ease-in-out;
+        }
+        .progress-text {
+            margin-top: 5px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .total-amount {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .spent-list {
+            max-height: 150px;
+            overflow-y: auto;
+            background: #191414;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            text-align: left;
+        }
+        .spent-list p {
+            margin: 5px 0;
+            padding: 5px;
+            background: #222;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>Expense Tracker</h2>
+        <button class="menu-icon" onclick="toggleMenu()">☰</button>
+    </div>
+    
+    <div class="menu" id="menu">
+        <button onclick="resetSpent()">Reset Data</button>
+    </div>
+
+    <div class="container">
+        <label for="amount">Enter Amount:</label>
+        <input type="number" id="amount" placeholder="Enter amount"><br>
+        <button onclick="addExpense()">Pay</button>
+    </div>
+    
+    <h3>Balance on Account</h3>
+    <div class="progress-bar-container">
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        <div class="progress-text" id="progress-text">0 / 40,000,000</div>
+        <div class="total-amount" id="total-balance">Total Balance: ₹40,000,000</div>
+    </div>
+    <div class="spent-list" id="spent-list"></div>
+
+    <script>
+        let balance = parseFloat(localStorage.getItem("balance")) || 40000000;
+        let spent = parseFloat(localStorage.getItem("spent")) || 0;
+        let spentEntries = JSON.parse(localStorage.getItem("spentEntries")) || [];
+
+        function updateProgress() {
+            let percentage = (spent / 40000000) * 100;
+            if (percentage > 100) percentage = 100;
+            document.getElementById("progress").style.width = percentage + "%";
+            document.getElementById("progress-text").innerText = `${spent.toLocaleString()} / 40,000,000`;
+            document.getElementById("total-balance").innerText = `Total Balance: ₹${balance.toLocaleString()}`;
+            updateSpentList();
+        }
+
+        function addExpense() {
+            let amount = parseFloat(document.getElementById("amount").value);
+            if (!isNaN(amount) && amount > 0 && amount <= balance) {
+                spent += amount;
+                balance -= amount;
+                spentEntries.push(`Spent: ₹${amount.toLocaleString()}`);
+                localStorage.setItem("spent", spent);
+                localStorage.setItem("balance", balance);
+                localStorage.setItem("spentEntries", JSON.stringify(spentEntries));
+                updateProgress();
+                document.getElementById("amount").value = "";
+            }
+        }
+
+        function resetSpent() {
+            spent = 0;
+            balance = 40000000;
+            spentEntries = [];
+            localStorage.clear();
+            updateProgress();
+        }
+
+        function updateSpentList() {
+            let list = document.getElementById("spent-list");
+            list.innerHTML = spentEntries.map(entry => `<p>${entry}</p>`).join("");
+        }
+
+        function toggleMenu() {
+            let menu = document.getElementById("menu");
+            menu.style.display = menu.style.display === "block" ? "none" : "block";
+        }
+
+        updateProgress();
+    </script>
+</body>
+</html>
