@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iPhone Style Calculator</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #000;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .back-button {
+      align-self: flex-start;
+      margin-left: 20px;
+      margin-bottom: 20px;
+      padding: 10px 18px;
+      font-size: 18px;
+      background-color: #1c1c1e;
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .back-button:hover {
+      background-color: #333;
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+    }
+
+
+    .calculator {
+      width: 90%;
+      max-width: 350px;
+      background: black;
+      padding: 20px;
+      border-radius: 30px;
+      box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.2);
+      margin-top: 20px;
+    }
+
+    .calcDisplay {
+      width: 100%;
+      height: 80px;
+      text-align: right;
+      font-size: 40px;
+      border: none;
+      background: black;
+      color: white;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .calcDisplay:focus {
+      outline: 2px solid #1DB954;
+    }
+
+    .calcbuttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .calculator button {
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      background: #333;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease-in-out;
+    }
+
+    .calculator button:hover:not(.operator):not(.convert):not(.addinr) {
+      background: linear-gradient(135deg, #444, #666);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+      border: 2px solid #888;
+    }
+
+    .operator {
+      background: orange;
+    }
+
+    .operator:hover {
+      background: linear-gradient(135deg, orange, #ff8c00);
+      box-shadow: 0 4px 15px rgba(255, 140, 0, 0.5);
+      border: 2px solid #ff8c00;
+    }
+
+    .convert {
+      background: #007AFF;
+      color: black;
+    }
+
+    .convert:hover {
+      background: linear-gradient(135deg, #007AFF, #005FCC);
+      box-shadow: 0 4px 15px rgba(0, 132, 255, 0.5);
+      border: 2px solid #0084ff;
+    }
+
+    .addinr {
+      background-color: #fff;
+      color: black;
+      border: 2px solid red;
+      transition: 0.3s ease;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .addinr:hover {
+      background-color: red;
+      color: white;
+    }
+
+    .zero {
+      grid-column: span 2;
+      width: 48vw;
+      max-width: 150px;
+      border-radius: 40px;
+    }
+
+    .zero:hover {
+      background: linear-gradient(135deg, #444, #666);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+      border: 2px solid #888;
+    }
+  </style>
+</head>
+<body>
+
+<button class="back-button"  onclick="window.location.href='gallery.html'">← Back</button>
+
+
+  <div class="calculator">
+    <input type="text" id="calcDisplay" class="calcDisplay" disabled>
+    <div class="calcbuttons">
+      <button onclick="calcClearDisplay()">C</button>
+      <button onclick="calcAppendValue('%')">%</button>
+      <button onclick="calcBackspace()">⌫</button>
+      <button class="operator" onclick="calcAppendValue('/')">÷</button>
+
+      <button onclick="calcAppendValue('7')">7</button>
+      <button onclick="calcAppendValue('8')">8</button>
+      <button onclick="calcAppendValue('9')">9</button>
+      <button class="operator" onclick="calcAppendValue('*')">×</button>
+
+      <button onclick="calcAppendValue('4')">4</button>
+      <button onclick="calcAppendValue('5')">5</button>
+      <button onclick="calcAppendValue('6')">6</button>
+      <button class="operator" onclick="calcAppendValue('-')">−</button>
+
+      <button onclick="calcAppendValue('1')">1</button>
+      <button onclick="calcAppendValue('2')">2</button>
+      <button onclick="calcAppendValue('3')">3</button>
+      <button class="operator" onclick="calcAppendValue('+')">+</button>
+
+      <button class="zero" onclick="calcAppendValue('0')">0</button>
+      <button onclick="calcAppendValue('.')">.</button>
+      <button class="operator" onclick="calcCalculate()">=</button>
+      <button class="convert" onclick="calcConvertToINR()">$</button>
+      <button class="addinr" onclick="calcAddFunds()">add</button>
+    </div>
+  </div>
+
+  <script>
+    let balance = 0;
+    let spentEntries = [];
+
+    function calcAppendValue(value) {
+      document.getElementById("calcDisplay").value += value;
+    }
+
+    function calcClearDisplay() {
+      document.getElementById("calcDisplay").value = "";
+    }
+
+    function calcBackspace() {
+      let display = document.getElementById("calcDisplay");
+      display.value = display.value.slice(0, -1);
+    }
+
+    function calcCalculate() {
+      try {
+        document.getElementById("calcDisplay").value = eval(document.getElementById("calcDisplay").value);
+      } catch (error) {
+        document.getElementById("calcDisplay").value = "Error";
+      }
+    }
+
+    function calcConvertToINR() {
+      let usd = parseFloat(document.getElementById("calcDisplay").value);
+      if (!isNaN(usd)) {
+        let inr = usd * 83;
+        document.getElementById("calcDisplay").value = inr.toFixed(2) + " INR";
+      }
+    }
+
+    function calcAddFunds() {
+    let value = document.getElementById("calcDisplay").value;
+    value = value.replace(" INR", "");
+    let amount = parseFloat(value);
+
+    if (!isNaN(amount) && amount > 0) {
+      // Use shared addFunds logic if available on parent or opener page
+      if (typeof addFunds === 'function') {
+        addFunds(amount); // Pass the value directly
+      } else {
+        // Fallback local logic
+        const confirmed = confirm(`Add ₹${amount.toLocaleString()} to your balance?`);
+        if (!confirmed) return;
+
+        let balance = parseFloat(localStorage.getItem("balance")) || 0;
+        let spentEntries = JSON.parse(localStorage.getItem("spentEntries")) || [];
+
+        balance += amount;
+        spentEntries.push(`Added: ₹${amount.toLocaleString()} (via Calculator)`);
+
+        localStorage.setItem("balance", balance);
+        localStorage.setItem("spentEntries", JSON.stringify(spentEntries));
+        alert(`Balance updated. New Balance: ₹${balance.toLocaleString()}`);
+      }
+      document.getElementById("calcDisplay").value = "";
+    } else {
+      alert("Invalid amount from calculator.");
+    }
+  }
+  </script>
+</body>
+</html>
