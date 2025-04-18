@@ -396,9 +396,9 @@
 	
     <div class="spent-list" id="spent-list"></div>
 	<div class="arrow">
-	<button class="arrow-button" onclick="window.location.href='calculator.html'">calculator</button>
+	<button class="arrow-button" onclick="window.location.href='calculator.html'">CALCULATOR</button>
     <button class="arrow-button" onclick="openPopup()">
-        Next <span>→</span>
+        ENTRIES <span>→</span>
     </button>
 </div>
 
@@ -419,165 +419,142 @@
 
 
 
-    <script>
-	
-	
-	
-	
-	
-        let balance = parseFloat(localStorage.getItem("balance")) || 0;
-        let spent = parseFloat(localStorage.getItem("spent")) || 0;
-        let spentEntries = JSON.parse(localStorage.getItem("spentEntries")) || [];
+ <script>
+    let balance = parseFloat(localStorage.getItem("balance")) || 0;
+    let spent = parseFloat(localStorage.getItem("spent")) || 0;
+    let spentEntries = JSON.parse(localStorage.getItem("spentEntries")) || [];
 
-        function updateProgress() {
-    let initialThreshold = 0; // Original balance limit before any funds were added
-    let effectiveThreshold = Math.max(initialThreshold, balance + spent); // Updates based on funds added
-    let percentage = (spent / effectiveThreshold) * 100;
-    if (percentage > 100) percentage = 100;
+    function updateProgress() {
+        let initialThreshold = 0;
+        let effectiveThreshold = Math.max(initialThreshold, balance + spent);
+        let percentage = (spent / effectiveThreshold) * 100;
+        if (percentage > 100) percentage = 100;
 
-    document.getElementById("progress").style.width = percentage + "%";
-    document.getElementById("progress-text").innerText = `${spent.toLocaleString()} / ${effectiveThreshold.toLocaleString()}`;
-    document.getElementById("total-balance").innerText = `Total Balance: ₹${balance.toLocaleString()}`;
+        document.getElementById("progress").style.width = percentage + "%";
+        document.getElementById("progress-text").innerText = `${spent.toLocaleString()} / ${effectiveThreshold.toLocaleString()}`;
+        document.getElementById("total-balance").innerText = `Total Balance: ₹${balance.toLocaleString()}`;
 
-    // Dynamic color transition from yellow to red
-    const red = 255;
-    const green = Math.max(0, Math.floor((1 - percentage / 100) * 185));
-    document.getElementById("progress").style.backgroundColor = `rgb(${red}, ${green}, 0)`;
+        const red = 255;
+        const green = Math.max(0, Math.floor((1 - percentage / 100) * 185));
+        document.getElementById("progress").style.backgroundColor = `rgb(${red}, ${green}, 0)`;
 
-    updateSpentList();
-}
-
-
-        function addExpense() {
-    let amount = parseFloat(document.getElementById("amount").value);
-    let note = document.getElementById("note").value.trim();
-
-    if (!isNaN(amount) && amount > 0 && amount <= balance) {
-        spent += amount;
-        balance -= amount;
-        
-        let entryText = `Spent: ₹${amount.toLocaleString()} - ${note || "No note"}`;
-        spentEntries.push(entryText);
-        
-        localStorage.setItem("spent", spent);
-        localStorage.setItem("balance", balance);
-        localStorage.setItem("spentEntries", JSON.stringify(spentEntries));
-
-        updateProgress();
-        document.getElementById("amount").value = "";
-        document.getElementById("note").value = "";
+        updateSpentList();
     }
-}
 
+    function addExpense() {
+        let amount = parseFloat(document.getElementById("amount").value);
+        let note = document.getElementById("note").value.trim();
 
-     function addFunds(amount) {
-  if (typeof amount === 'undefined') {
-    amount = prompt("Enter amount to add:");
-    amount = parseFloat(amount);
-  }
+        if (!isNaN(amount) && amount > 0 && amount <= balance) {
+            spent += amount;
+            balance -= amount;
 
-  if (!isNaN(amount) && amount > 0) {
-    balance += amount;
-    spentEntries.push(`Added: ₹${amount.toLocaleString()}`);
-    localStorage.setItem("balance", balance);
-    localStorage.setItem("spentEntries", JSON.stringify(spentEntries));
-    updateProgress();
-  }
-}
+            let entryText = `Spent: ₹${amount.toLocaleString()} - ${note || "No note"}`;
+            spentEntries.push(entryText);
 
+            localStorage.setItem("spent", spent);
+            localStorage.setItem("balance", balance);
+            localStorage.setItem("spentEntries", JSON.stringify(spentEntries));
 
-        function resetSpent() {
-            spent = 0;
-            balance = 0;
-            spentEntries = [];
-            localStorage.clear();
+            updateProgress();
+            document.getElementById("amount").value = "";
+            document.getElementById("note").value = "";
+        }
+    }
+
+    function addFunds(amount) {
+        if (typeof amount === 'undefined') {
+            amount = prompt("Enter amount to add:");
+            amount = parseFloat(amount);
+        }
+
+        if (!isNaN(amount) && amount > 0) {
+            balance += amount;
+            spentEntries.push(`Added: ₹${amount.toLocaleString()}`);
+            localStorage.setItem("balance", balance);
+            localStorage.setItem("spentEntries", JSON.stringify(spentEntries));
             updateProgress();
         }
-function updateSpentList() {
-    let list = document.getElementById("popup");
-    list.innerHTML = `<button class="back-button" onclick="closePopup()">← Back</button>
-                      <h3>Spent List</h3>
-                      <div id="spent-list-popup" class="spent-list">
-                          ${spentEntries.map((entry, index) => 
-                              `<p role="button" tabindex="0" onclick="handleSpentClick(${index})" 
-                               onkeypress="handleKeyPress(event, ${index})">${entry}</p>`).join("")}
-                      </div>`;
-}
-
-
-
-
-function handleSpentClick(index) {
-    alert(spentEntries[index]); // Now includes both amount and note
-}
-
-
-function handleKeyPress(event, index) {
-    if (event.key === "Enter" || event.key === " ") {
-        handleSpentClick(index);
     }
-}
 
+    function resetSpent() {
+        spent = 0;
+        balance = 0;
+        spentEntries = [];
+        localStorage.clear();
+        updateProgress();
+    }
 
-        
+    function updateSpentList() {
+        let list = document.getElementById("popup");
+        list.innerHTML = `
+            <button class="back-button" onclick="closePopup()">← Back</button>
+            <h3>Spent List</h3>
+            <div id="spent-list-popup" class="spent-list">
+                ${spentEntries.map((entry, index) =>
+                    `<p role="button" tabindex="0" onclick="handleSpentClick(${index})" 
+                    onkeypress="handleKeyPress(event, ${index})">${entry}</p>`).join("")}
+            </div>`;
+    }
 
-        function toggleMenu() {
-            let menu = document.getElementById("menu");
-            menu.style.display = menu.style.display === "block" ? "none" : "block";
+    function handleSpentClick(index) {
+        alert(spentEntries[index]);
+    }
+
+    function handleKeyPress(event, index) {
+        if (event.key === "Enter" || event.key === " ") {
+            handleSpentClick(index);
         }
-
-        updateProgress();
-		
-function openPopup() {
-    let password = prompt("Enter 4-digit password:", "");
-    
-    if (password === "0505") {
-        updateSpentList();
-        document.getElementById("popup").style.display = "block";
-    } else {
-        alert("Incorrect password! Try again.");
     }
-}
 
-function closePopup() {
-    document.getElementById("popup").style.display = "none";
-}
-
-
-
-	
-
-
-
-
-function calcAddFunds() {
-    let value = document.getElementById("calcDisplay").value;
-
-    // Remove " INR" if present
-    value = value.replace(" INR", "");
-
-    let amount = parseFloat(value);
-
-    if (!isNaN(amount) && amount > 0) {
-        // Ask for confirmation
-        const confirmed = confirm(`Are you sure you want to add ₹${amount.toLocaleString()} to your balance?`);
-        if (!confirmed) return;
-
-        balance += amount;
-        spentEntries.push(`Added: ₹${amount.toLocaleString()} (via Calculator)`);
-        localStorage.setItem("balance", balance);
-        localStorage.setItem("spentEntries", JSON.stringify(spentEntries));
-        updateProgress();
-        document.getElementById("calcDisplay").value = ""; // Clear calculator display
-    } else {
-        alert("Invalid amount from calculator.");
+    function toggleMenu() {
+        let menu = document.getElementById("menu");
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
     }
-}
-function logout() {
-  sessionStorage.removeItem("authenticated");
-  window.location.href = "index.html";
-}
 
-    </script>
+    function openPopup() {
+        let password = prompt("Enter 4-digit password:", "");
+        if (password === "0505") {
+            updateSpentList();
+            document.getElementById("popup").style.display = "block";
+        } else {
+            alert("Incorrect password! Try again.");
+        }
+    }
+
+    function closePopup() {
+        document.getElementById("popup").style.display = "none";
+    }
+
+    function calcAddFunds() {
+        let value = document.getElementById("calcDisplay").value;
+        value = value.replace(" INR", "");
+        let amount = parseFloat(value);
+
+        if (!isNaN(amount) && amount > 0) {
+            const confirmed = confirm(`Are you sure you want to add ₹${amount.toLocaleString()} to your balance?`);
+            if (!confirmed) return;
+
+            balance += amount;
+            spentEntries.push(`Added: ₹${amount.toLocaleString()} (via Calculator)`);
+            localStorage.setItem("balance", balance);
+            localStorage.setItem("spentEntries", JSON.stringify(spentEntries));
+            updateProgress();
+            document.getElementById("calcDisplay").value = "";
+        } else {
+            alert("Invalid amount from calculator.");
+        }
+    }
+
+    function logout() {
+        sessionStorage.removeItem("authenticated");
+        window.location.href = "index.html";
+    }
+
+    // Initialize UI on load
+    updateProgress();
+</script>
+
+
 </body>
 </html>
