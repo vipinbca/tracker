@@ -1,27 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>iPhone Style Calculator</title>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       background: #000;
       color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
     }
 
     .back-button {
-      align-self: flex-start;
-      margin-left: 20px;
-      margin-bottom: 20px;
-      padding: 10px 18px;
+      position: absolute;
+      top: 30px;
+      left: 20px;
+      padding: 8px 14px;
       font-size: 18px;
       background-color: #1c1c1e;
       color: #fff;
@@ -30,6 +35,7 @@
       box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
       cursor: pointer;
       transition: all 0.3s ease-in-out;
+      z-index: 10;
     }
 
     .back-button:hover {
@@ -37,15 +43,21 @@
       box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
     }
 
+    .container {
+      width: 100%;
+      max-width: 375px;
+      padding: 0 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
     .calculator {
-      width: 90%;
-      max-width: 350px;
+      width: 100%;
       background: black;
       padding: 20px;
       border-radius: 30px;
       box-shadow: 0px 4px 15px rgba(255, 255, 255, 0.2);
-      margin-top: 20px;
     }
 
     .calcDisplay {
@@ -127,8 +139,7 @@
 
     .zero {
       grid-column: span 2;
-      width: 48vw;
-      max-width: 150px;
+      width: 100%;
       border-radius: 40px;
     }
 
@@ -141,37 +152,38 @@
 </head>
 <body>
 
-<button class="back-button"  onclick="window.location.href='gallery.html'">← Back</button>
+  <button class="back-button" onclick="window.location.href='gallery.html'">← Back</button>
 
+  <div class="container">
+    <div class="calculator">
+      <input type="text" id="calcDisplay" class="calcDisplay" disabled>
+      <div class="calcbuttons">
+        <button onclick="calcClearDisplay()">C</button>
+        <button onclick="calcAppendValue('%')">%</button>
+        <button onclick="calcBackspace()">⌫</button>
+        <button class="operator" onclick="calcAppendValue('/')">÷</button>
 
-  <div class="calculator">
-    <input type="text" id="calcDisplay" class="calcDisplay" disabled>
-    <div class="calcbuttons">
-      <button onclick="calcClearDisplay()">C</button>
-      <button onclick="calcAppendValue('%')">%</button>
-      <button onclick="calcBackspace()">⌫</button>
-      <button class="operator" onclick="calcAppendValue('/')">÷</button>
+        <button onclick="calcAppendValue('7')">7</button>
+        <button onclick="calcAppendValue('8')">8</button>
+        <button onclick="calcAppendValue('9')">9</button>
+        <button class="operator" onclick="calcAppendValue('*')">×</button>
 
-      <button onclick="calcAppendValue('7')">7</button>
-      <button onclick="calcAppendValue('8')">8</button>
-      <button onclick="calcAppendValue('9')">9</button>
-      <button class="operator" onclick="calcAppendValue('*')">×</button>
+        <button onclick="calcAppendValue('4')">4</button>
+        <button onclick="calcAppendValue('5')">5</button>
+        <button onclick="calcAppendValue('6')">6</button>
+        <button class="operator" onclick="calcAppendValue('-')">−</button>
 
-      <button onclick="calcAppendValue('4')">4</button>
-      <button onclick="calcAppendValue('5')">5</button>
-      <button onclick="calcAppendValue('6')">6</button>
-      <button class="operator" onclick="calcAppendValue('-')">−</button>
+        <button onclick="calcAppendValue('1')">1</button>
+        <button onclick="calcAppendValue('2')">2</button>
+        <button onclick="calcAppendValue('3')">3</button>
+        <button class="operator" onclick="calcAppendValue('+')">+</button>
 
-      <button onclick="calcAppendValue('1')">1</button>
-      <button onclick="calcAppendValue('2')">2</button>
-      <button onclick="calcAppendValue('3')">3</button>
-      <button class="operator" onclick="calcAppendValue('+')">+</button>
-
-      <button class="zero" onclick="calcAppendValue('0')">0</button>
-      <button onclick="calcAppendValue('.')">.</button>
-      <button class="operator" onclick="calcCalculate()">=</button>
-      <button class="convert" onclick="calcConvertToINR()">$</button>
-      <button class="addinr" onclick="calcAddFunds()">add</button>
+        <button class="zero" onclick="calcAppendValue('0')">0</button>
+        <button onclick="calcAppendValue('.')">.</button>
+        <button class="operator" onclick="calcCalculate()">=</button>
+        <button class="convert" onclick="calcConvertToINR()">AED</button>
+        <button class="addinr" onclick="calcAddFunds()">add</button>
+      </div>
     </div>
   </div>
 
@@ -203,40 +215,38 @@
     function calcConvertToINR() {
       let usd = parseFloat(document.getElementById("calcDisplay").value);
       if (!isNaN(usd)) {
-        let inr = usd * 83;
+        let inr = usd * 22;
         document.getElementById("calcDisplay").value = inr.toFixed(2) + " INR";
       }
     }
 
     function calcAddFunds() {
-    let value = document.getElementById("calcDisplay").value;
-    value = value.replace(" INR", "");
-    let amount = parseFloat(value);
+      let value = document.getElementById("calcDisplay").value;
+      value = value.replace(" INR", "");
+      let amount = parseFloat(value);
 
-    if (!isNaN(amount) && amount > 0) {
-      // Use shared addFunds logic if available on parent or opener page
-      if (typeof addFunds === 'function') {
-        addFunds(amount); // Pass the value directly
+      if (!isNaN(amount) && amount > 0) {
+        if (typeof addFunds === 'function') {
+          addFunds(amount);
+        } else {
+          const confirmed = confirm(`Add ₹${amount.toLocaleString()} to your balance?`);
+          if (!confirmed) return;
+
+          let balance = parseFloat(localStorage.getItem("balance")) || 0;
+          let spentEntries = JSON.parse(localStorage.getItem("spentEntries")) || [];
+
+          balance += amount;
+          spentEntries.push(`Added: ₹${amount.toLocaleString()} (via Calculator)`);
+
+          localStorage.setItem("balance", balance);
+          localStorage.setItem("spentEntries", JSON.stringify(spentEntries));
+          alert(`Balance updated. New Balance: ₹${balance.toLocaleString()}`);
+        }
+        document.getElementById("calcDisplay").value = "";
       } else {
-        // Fallback local logic
-        const confirmed = confirm(`Add ₹${amount.toLocaleString()} to your balance?`);
-        if (!confirmed) return;
-
-        let balance = parseFloat(localStorage.getItem("balance")) || 0;
-        let spentEntries = JSON.parse(localStorage.getItem("spentEntries")) || [];
-
-        balance += amount;
-        spentEntries.push(`Added: ₹${amount.toLocaleString()} (via Calculator)`);
-
-        localStorage.setItem("balance", balance);
-        localStorage.setItem("spentEntries", JSON.stringify(spentEntries));
-        alert(`Balance updated. New Balance: ₹${balance.toLocaleString()}`);
+        alert("Invalid amount from calculator.");
       }
-      document.getElementById("calcDisplay").value = "";
-    } else {
-      alert("Invalid amount from calculator.");
     }
-  }
   </script>
 </body>
 </html>
