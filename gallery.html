@@ -21,13 +21,27 @@
             align-items: center;
             padding: 10px 20px;
         }
+		.header h2 {
+    font-size: 24px; /* Adjust font size as needed */
+    margin: 0;
+    background: linear-gradient(to bottom right, #ff0033, #3300ff);
+    -webkit-background-clip: text;
+    color: transparent;
+}
+		.header h1 {
+              font-size: 18px; /* Reduce this value as needed */
+              margin: 0; /* Optional: remove default margin */
+			  linear-gradient(to bottom right, #ff0033, #3300ff);
+        }
         .menu-icon {
-            font-size: 24px;
+            font-size: 18px;
+			width: 30px;     /* set to your preferred width */
+            height: 30px;
             cursor: pointer;
             background-color: rgba(29, 185, 84, 0.2);
             border: none;
             color: #1DB954;
-            padding: 10px;
+            padding: 6px;
             border-radius: 4px;
             transition: background 0.3s ease;
         }
@@ -35,16 +49,17 @@
             background-color: rgba(29, 185, 84, 0.4);
         }
         .menu {
-            display: none;
-            position: absolute;
-            top: 50px;
-            right: 20px;
-            background-color: #191414;
-            border-radius: 5px;
-            box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
-            width: 150px;
-            text-align: left;
-        }
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    background-color: #191414;
+    border-radius: 5px;
+    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.1);
+    width: 150px;
+    text-align: left;
+    z-index: 1001; /* Added this line to ensure it's on top */
+}
         .menu button {
             display: block;
             width: 100%;
@@ -52,7 +67,7 @@
             border: none;
             padding: 10px;
             text-align: left;
-            color: #1DB954;
+            color: #ffffff;
             font-size: 14px;
             cursor: pointer;
         }
@@ -367,12 +382,12 @@
 <body>
     <div class="header">
         <h2>Expense Tracker</h2>
-        <button class="menu-icon" onclick="toggleMenu()">☰</button>
-		<button class="menu-icon" onclick="logout()">Logout</button>
+        <button class="menu-icon" onclick="toggleMenu()">☰</button>	
     </div>
     
     <div class="menu" id="menu">
         <button onclick="resetSpent()">Reset Data</button>
+		<button onclick="logout()">Logout</button>
     </div>
 
     <div class="container">
@@ -410,6 +425,7 @@
 <div id="password-popup" class="popup-container">
     <h3>Enter Password</h3>
     <input type="password" id="password-input" inputmode="numeric" maxlength="4" placeholder="****" style="font-size:20px; text-align:center; width: 80%; padding:10px;">
+
     <br><br>
     <button onclick="checkPassword()">Submit</button>
 </div>
@@ -420,6 +436,17 @@
 
 
  <script>
+ 
+ 
+    document.addEventListener("click", function(event) {
+    let menu = document.getElementById("menu");
+    let menuIcon = document.querySelector(".menu-icon");
+    if (menu.style.display === "block" && !menu.contains(event.target) && event.target !== menuIcon) {
+        menu.style.display = "none";
+    }
+});
+
+   
     let balance = parseFloat(localStorage.getItem("balance")) || 0;
     let spent = parseFloat(localStorage.getItem("spent")) || 0;
     let spentEntries = JSON.parse(localStorage.getItem("spentEntries")) || [];
@@ -483,6 +510,8 @@
         spentEntries = [];
         localStorage.clear();
         updateProgress();
+		
+		document.getElementById("menu").style.display = "none";
     }
 
     function updateSpentList() {
@@ -549,6 +578,8 @@
     function logout() {
         sessionStorage.removeItem("authenticated");
         window.location.href = "index.html";
+		
+		document.getElementById("menu").style.display = "none";
     }
 
     // Initialize UI on load
