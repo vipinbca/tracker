@@ -253,7 +253,7 @@
 
     // On tab switch or minimize
     document.addEventListener("visibilitychange", function () {
-      if (document.hidden || document.visibilityState === "hidden") {
+      if (document.visibilityState === "hidden") {
         sessionStorage.removeItem("authenticated");
         window.location.href = "index.html";
       }
