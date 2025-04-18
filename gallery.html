@@ -574,7 +574,40 @@
             alert("Invalid amount from calculator.");
         }
     }
+	
+	// Redirect to index.html on refresh or tab close
+window.addEventListener('beforeunload', function (e) {
+    // Optional: clear storage or handle cleanup
+    window.location.href = "index.html"; // Will trigger on refresh
+});
 
+// Redirect if user switches tab or minimizes
+document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "hidden") {
+        window.location.href = "index.html";
+    }
+});
+
+  
+   window.addEventListener("beforeunload", function(event) {
+    // Clear session storage or other session-related data
+    sessionStorage.removeItem("authenticated");
+
+    // Redirect to the index page (login page)
+    window.location.href = "index.html"; // Redirect to index page
+});
+
+// Detect tab visibility change (when the page is deactivated)
+document.addEventListener("visibilitychange", function() {
+    if (document.hidden) {
+        // Clear session storage when the page becomes inactive
+        sessionStorage.removeItem("authenticated");
+
+        // Redirect to index page when the tab is deactivated
+        window.location.href = "index.html"; // Redirect to index page
+    }
+}); 
+   
     function logout() {
         sessionStorage.removeItem("authenticated");
         window.location.href = "index.html";
