@@ -246,47 +246,22 @@
       } else {
         alert("Invalid amount from calculator.");
       }
+
     }
-	  
-	  
-	  
+	
+	 window.addEventListener('beforeunload', function (event) {
+      sessionStorage.removeItem("authenticated");
+      window.location.href = "index.html";
+    });
 
-  let logoutTimer;
-
-  function redirectToHome() {
-    alert("Session ended due to inactivity or browser exit.");
-    window.location.href = "index.html";
-  }
-
-  function startLogoutTimer() {
-    clearTimeout(logoutTimer);
-    logoutTimer = setTimeout(redirectToHome, 60000); // 1 minute
-  }
-
-  // Start timer on any interaction
-  ["mousemove", "keydown", "touchstart", "click"].forEach(event => {
-    document.addEventListener(event, startLogoutTimer);
-  });
-
-  // Start timer initially
-  startLogoutTimer();
-
-  // Detect if user leaves the tab or minimizes
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) {
-      redirectToHome();
-    }
-  });
-
-  // Optional: Also redirect if user closes tab or refreshes
-  window.addEventListener("beforeunload", () => {
-    // Optional: Save session data if needed
-    // Uncomment next line if you want logout on refresh/close too
-    // redirectToHome();
-  });
-
-
-
+    // On tab switch or minimize
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden || document.visibilityState === "hidden") {
+        sessionStorage.removeItem("authenticated");
+        window.location.href = "index.html";
+      }
+    });
+	
   </script>
 </body>
 </html>
