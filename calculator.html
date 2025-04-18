@@ -249,10 +249,7 @@
 
     }
 	
-	 window.addEventListener('beforeunload', function (event) {
-      sessionStorage.removeItem("authenticated");
-      window.location.href = "index.html";
-    });
+	
 
     // On tab switch or minimize
     document.addEventListener("visibilitychange", function () {
